@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ATX Compaction Field App</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --navy:#00284B;
+    --orange:#F37021;
+    --olive:#C7E100;
+    --olive-dark:#9aad00;
+    --white:#ffffff;
+    --off-white:#F8F6F2;
+    --light-gray:#e8e6e2;
+    --mid-gray:#888780;
+    --text:#1a1a1a;
+    --text-secondary:#555;
+    --green-bg:#EAF3DE;--green-border:#639922;--green-text:#3B6D11;
+    --yellow-bg:#FAEEDA;--yellow-border:#BA7517;--yellow-text:#854F0B;
+    --red-bg:#FCEBEB;--red-border:#A32D2D;--red-text:#A32D2D;
+    --radius:8px;--radius-lg:12px;
+  }
+  body{font-family:'Segoe UI',Arial,sans-serif;font-size:15px;color:var(--text);background:var(--off-white);min-height:100vh}
+
+  /* HEADER */
+  .app-header{background:var(--navy);color:var(--white);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+  .app-header .brand{font-size:13px;font-weight:600;letter-spacing:0.05em;color:var(--olive)}
+  .app-header .title{font-size:15px;font-weight:600}
+  .app-header .auth-btn{background:transparent;border:1px solid rgba(255,255,255,0.3);color:var(--white);padding:6px 12px;border-radius:var(--radius);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px}
+  .app-header .auth-btn:hover{background:rgba(255,255,255,0.1)}
+  .auth-status{width:8px;height:8px;border-radius:50%;background:#ccc;flex-shrink:0}
+  .auth-status.connected{background:var(--olive)}
+
+  /* MAIN */
+  .main{max-width:680px;margin:0 auto;padding:12px 12px 80px}
+
+  /* SECTIONS */
+  .section{background:var(--white);border:1px solid var(--light-gray);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:12px}
+  .section-title{font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--olive)}
+
+  /* FORMS */
+  .field-row{display:grid;gap:10px;margin-bottom:10px}
+  .field-row.two{grid-template-columns:1fr 1fr}
+  .field-row.three{grid-template-columns:1fr 1fr 1fr}
+  .field-group label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:4px}
+  .field-group input,.field-group select,.field-group textarea{
+    width:100%;font-size:14px;padding:8px 10px;
+    border:1px solid var(--light-gray);border-radius:var(--radius);
+    background:var(--white);color:var(--text);
+    -webkit-appearance:none;appearance:none
+  }
+  .field-group input:focus,.field-group select:focus,.field-group textarea:focus{
+    outline:none;border-color:var(--navy);box-shadow:0 0 0 2px rgba(0,40,75,0.1)
+  }
+  .field-group input[readonly]{background:var(--off-white);color:var(--mid-gray)}
+  .field-group textarea{resize:vertical;min-height:60px}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+  /* PSI GRID */
+  .psi-section-label{font-size:12px;color:var(--text-secondary);margin-bottom:8px;padding:6px 10px;background:var(--off-white);border-radius:var(--radius);border-left:3px solid var(--navy)}
+  .psi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+  .psi-cell label{display:block;font-size:11px;font-weight:500;color:var(--text-secondary);margin-bottom:3px}
+  .psi-cell input{width:100%;font-size:15px;padding:8px;border:1px solid var(--light-gray);border-radius:var(--radius);text-align:center;font-weight:500}
+  .psi-cell input.green{border-color:var(--green-border);background:var(--green-bg);color:var(--green-text)}
+  .psi-cell input.yellow{border-color:var(--yellow-border);background:var(--yellow-bg);color:var(--yellow-text)}
+  .psi-cell input.red{border-color:var(--red-border);background:var(--red-bg);color:var(--red-text)}
+
+  /* BUTTONS */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:var(--radius);border:1px solid var(--light-gray);background:var(--white);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent}
+  .btn:active{transform:scale(0.97)}
+  .btn-primary{background:var(--navy);border-color:var(--navy);color:var(--white)}
+  .btn-primary:hover{background:#003a6b}
+  .btn-export{background:var(--olive);border-color:var(--olive-dark);color:var(--navy)}
+  .btn-export:hover{background:var(--olive-dark)}
+  .btn-danger{color:var(--red-text);border-color:var(--red-border)}
+  .btn-danger:hover{background:var(--red-bg)}
+  .btn-sm{padding:6px 12px;font-size:12px}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+  /* STATUS BAR */
+  .status-bar{background:var(--navy);color:var(--white);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+  .status-bar .count{font-weight:600;color:var(--olive)}
+  .save-indicator{font-size:11px;color:var(--olive);opacity:0;transition:opacity 0.3s}
+  .save-indicator.visible{opacity:1}
+
+  /* POINT CARDS */
+  .point-card{border:1px solid var(--light-gray);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;background:var(--off-white)}
+  .point-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .point-id{font-size:13px;font-weight:600;color:var(--navy)}
+  .point-meta{font-size:12px;color:var(--text-secondary);margin-bottom:6px}
+  .psi-badges{display:flex;gap:5px;flex-wrap:wrap}
+  .badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px}
+  .badge.green{background:var(--green-bg);color:var(--green-text);border:1px solid var(--green-border)}
+  .badge.yellow{background:var(--yellow-bg);color:var(--yellow-text);border:1px solid var(--yellow-border)}
+  .badge.red{background:var(--red-bg);color:var(--red-text);border:1px solid var(--red-border)}
+  .badge.empty{background:var(--light-gray);color:var(--mid-gray)}
+  .point-note{font-size:12px;color:var(--text-secondary);margin-top:5px;font-style:italic}
+
+  /* TIP GUIDANCE */
+  .tip-guidance{font-size:12px;color:var(--text-secondary);margin-top:6px;padding:8px 10px;background:var(--off-white);border-radius:var(--radius);border-left:3px solid var(--orange)}
+
+  /* DIVIDER */
+  .divider{height:1px;background:var(--light-gray);margin:12px 0}
+
+  /* DRIVE STATUS */
+  .drive-status{font-size:12px;padding:8px 12px;border-radius:var(--radius);margin-bottom:12px;display:none}
+  .drive-status.success{background:var(--green-bg);color:var(--green-text);border:1px solid var(--green-border);display:block}
+  .drive-status.error{background:var(--red-bg);color:var(--red-text);border:1px solid var(--red-border);display:block}
+  .drive-status.info{background:#E6F1FB;color:#185FA5;border:1px solid #B5D4F4;display:block}
+
+  /* RESPONSIVE */
+  @media(max-width:480px){
+    .field-row.two,.field-row.three{grid-template-columns:1fr}
+    .psi-grid{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div>
+    <div class="brand">AEROTERRAX LAND SOLUTIONS</div>
+    <div class="title">Compaction Field App</div>
+  </div>
+  <button class="auth-btn" onclick="handleAuth()" id="authBtn">
+    <span class="auth-status" id="authDot"></span>
+    <span id="authLabel">Connect Drive</span>
+  </button>
+</div>
+
+<div class="main">
+
+  <div class="drive-status" id="driveStatus"></div>
+
+  <!-- SURVEY HEADER -->
+  <div class="section">
+    <div class="section-title">Survey header</div>
+    <div class="field-row two">
+      <div class="field-group"><label>Survey ID</label><input type="text" id="surveyId" readonly></div>
+      <div class="field-group"><label>Date</label><input type="date" id="surveyDate"></div>
+    </div>
+    <div class="field-row two">
+      <div class="field-group"><label>Client name</label><input type="text" id="clientName" placeholder="Last, First" oninput="saveSession()"></div>
+      <div class="field-group"><label>Property / parcel</label><input type="text" id="property" placeholder="Name or ID" oninput="saveSession()"></div>
+    </div>
+    <div class="field-row two">
+      <div class="field-group"><label>Operator</label><input type="text" id="operator" placeholder="Your name" oninput="saveSession()"></div>
+      <div class="field-group"><label>General moisture condition</label>
+        <select id="moisture" onchange="saveSession()">
+          <option value="">— select —</option>
+          <option>Dry</option>
+          <option>Field moist</option>
+          <option>Wet / saturated</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIP SELECTION TEST -->
+  <div class="section">
+    <div class="section-title">Tip selection test — ASAE S313.3</div>
+    <div class="field-row three">
+      <div class="field-group"><label>Small tip (1/2") reading</label><input type="number" id="tipSmall" min="0" max="300" placeholder="psi" oninput="autoSelectTip();saveSession()"></div>
+      <div class="field-group"><label>Large tip (3/4") reading</label><input type="number" id="tipLarge" min="0" max="300" placeholder="psi" oninput="autoSelectTip();saveSession()"></div>
+      <div class="field-group"><label>Tip selected for survey</label>
+        <select id="tipSelected" onchange="onSurveyTipChange();saveSession()">
+          <option value="">— select —</option>
+          <option value='Small (1/2")'>Small (1/2") — firm soil default</option>
+          <option value='Large (3/4")'>Large (3/4") — loose / soft soil</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group"><label>Tip selection note</label><input type="text" id="tipNote" placeholder="e.g. Small tip used — readings consistent, soil field moist" oninput="saveSession()"></div>
+    </div>
+    <div class="tip-guidance">Per manufacturer (Agratronix, ASAE S313.3): start with small tip (1/2") as default. Switch to large tip (3/4") if readings appear very low or soil is very loose.</div>
+  </div>
+
+  <!-- SAMPLE POINT ENTRY -->
+  <div class="section">
+    <div class="section-title">Sample point entry</div>
+    <div class="field-row two">
+      <div class="field-group"><label>Point ID</label><input type="text" id="ptId" readonly></div>
+      <div class="field-group"><label>Tip used at this point</label>
+        <select id="ptTip">
+          <option value="">— select —</option>
+          <option value='Small (1/2")'>Small (1/2")</option>
+          <option value='Large (3/4")'>Large (3/4")</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row two">
+      <div class="field-group"><label>Latitude (decimal degrees)</label><input type="number" id="lat" step="0.000001" placeholder="e.g. 37.891234"></div>
+      <div class="field-group"><label>Longitude (decimal degrees)</label><input type="number" id="lon" step="0.000001" placeholder="e.g. -91.234567"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="psi-section-label">PSI readings — color updates by zone: green 0–200 / yellow 200–300 / red 300+</div>
+    <div class="psi-grid">
+      <div class="psi-cell"><label>3" depth</label><input type="number" id="p3" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
+      <div class="psi-cell"><label>6" depth</label><input type="number" id="p6" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
+      <div class="psi-cell"><label>9" depth</label><input type="number" id="p9" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
+      <div class="psi-cell"><label>12" depth</label><input type="number" id="p12" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
+      <div class="psi-cell"><label>15" depth</label><input type="number" id="p15" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
+      <div class="psi-cell"><label>18" depth</label><input type="number" id="p18" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="field-row two">
+      <div class="field-group"><label>Soil horizon</label><input type="text" id="horizon" placeholder="e.g. A, B, C"></div>
+      <div class="field-group"><label>Location description</label><input type="text" id="locDesc" placeholder="e.g. NW corner near fence line"></div>
+    </div>
+    <div class="field-row">
+      <div class="field-group"><label>Notes</label><textarea id="notes" placeholder="Observations, anomalies, surface conditions at this point"></textarea></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="addPoint()">+ Add point</button>
+      <button class="btn" onclick="clearPointForm()">Clear form</button>
+    </div>
+  </div>
+
+  <!-- STATUS + POINT LIST -->
+  <div class="status-bar">
+    <div>Points logged: <span class="count" id="ptCount">0</span></div>
+    <div class="save-indicator" id="saveIndicator">Saved</div>
+  </div>
+
+  <div id="pointList"></div>
+
+  <!-- EXPORT -->
+  <div class="section">
+    <div class="section-title">Export</div>
+    <div class="btn-row">
+      <button class="btn btn-export" onclick="exportToDrive()">Export CSV to Google Drive</button>
+      <button class="btn" onclick="exportLocal()">Save local CSV</button>
+      <button class="btn" onclick="exportBackup()">Session backup (JSON)</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-danger btn-sm" onclick="clearAll()">Clear all data</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+const CLIENT_ID = '19039369574-0h7p66t10nn2vnlidumku1tq3h5ldjaa.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_FOLDER_PATH = ['Field Data', 'ATX Field Compaction Surveys'];
+
+let tokenClient;
+let accessToken = null;
+let points = [];
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+function init(){
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('surveyDate').value = now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());
+  document.getElementById('surveyId').value = 'ATX-SC-'+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'-'+Math.floor(Math.random()*1000).toString().padStart(3,'0');
+  updatePtId();
+  loadSession();
+  initGoogleAuth();
+}
+
+// ── GOOGLE AUTH ───────────────────────────────────────────────────────────────
+function initGoogleAuth(){
+  window.onGoogleLibraryLoad = () => {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPES,
+      callback: (resp) => {
+        if(resp.error){ showDriveStatus('Authorization failed: '+resp.error,'error'); return; }
+        accessToken = resp.access_token;
+        setAuthUI(true);
+        showDriveStatus('Connected to Google Drive — ready to export','success');
+        setTimeout(()=>hideDriveStatus(),3000);
+      }
+    });
+  };
+}
+
+function handleAuth(){
+  if(accessToken){ accessToken=null; setAuthUI(false); return; }
+  if(tokenClient){ tokenClient.requestAccessToken(); }
+  else { showDriveStatus('Google auth library still loading — try again in a moment','info'); }
+}
+
+function setAuthUI(connected){
+  document.getElementById('authDot').className = 'auth-status'+(connected?' connected':'');
+  document.getElementById('authLabel').textContent = connected ? 'Drive connected' : 'Connect Drive';
+}
+
+// ── TIP LOGIC ─────────────────────────────────────────────────────────────────
+function autoSelectTip(){
+  const small = parseFloat(document.getElementById('tipSmall').value);
+  if(!isNaN(small) && small < 100){
+    document.getElementById('tipSelected').value = 'Large (3/4")';
+    document.getElementById('tipNote').value = 'Small tip readings very low — switched to large tip per manufacturer guidance';
+    onSurveyTipChange();
+  }
+}
+
+function onSurveyTipChange(){
+  const selected = document.getElementById('tipSelected').value;
+  if(selected) document.getElementById('ptTip').value = selected;
+}
+
+// ── PSI COLOR ─────────────────────────────────────────────────────────────────
+function colorPsi(el){
+  el.classList.remove('green','yellow','red');
+  const v = parseFloat(el.value);
+  if(isNaN(v)||el.value==='') return;
+  if(v < 200) el.classList.add('green');
+  else if(v < 300) el.classList.add('yellow');
+  else el.classList.add('red');
+}
+
+function psiClass(v){
+  if(v===''||v===undefined||v===null) return 'empty';
+  const n = parseFloat(v);
+  if(isNaN(n)) return 'empty';
+  if(n < 200) return 'green';
+  if(n < 300) return 'yellow';
+  return 'red';
+}
+
+// ── POINT MANAGEMENT ──────────────────────────────────────────────────────────
+function addPoint(){
+  const lat = document.getElementById('lat').value;
+  const lon = document.getElementById('lon').value;
+  if(!lat||!lon){ alert('Latitude and longitude are required.'); return; }
+  const pt = {
+    pointId: document.getElementById('ptId').value,
+    lat, lon,
+    tip: document.getElementById('ptTip').value,
+    psi3:  document.getElementById('p3').value,
+    psi6:  document.getElementById('p6').value,
+    psi9:  document.getElementById('p9').value,
+    psi12: document.getElementById('p12').value,
+    psi15: document.getElementById('p15').value,
+    psi18: document.getElementById('p18').value,
+    horizon: document.getElementById('horizon').value,
+    locDesc: document.getElementById('locDesc').value,
+    notes: document.getElementById('notes').value
+  };
+  points.push(pt);
+  renderPoints();
+  clearPointForm();
+  updatePtId();
+  saveSession();
+  flashSaved();
+}
+
+function removePoint(i){
+  if(!confirm('Remove '+points[i].pointId+'?')) return;
+  points.splice(i,1);
+  points.forEach((p,j)=>{ p.pointId='PT-'+String(j+1).padStart(3,'0'); });
+  renderPoints();
+  updatePtId();
+  saveSession();
+}
+
+function updatePtId(){
+  document.getElementById('ptId').value = 'PT-'+String(points.length+1).padStart(3,'0');
+}
+
+function clearPointForm(){
+  ['lat','lon','p3','p6','p9','p12','p15','p18','horizon','locDesc','notes'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.value='';
+    el.classList.remove('green','yellow','red');
+  });
+  document.getElementById('ptTip').value = document.getElementById('tipSelected').value || '';
+}
+
+function renderPoints(){
+  document.getElementById('ptCount').textContent = points.length;
+  const list = document.getElementById('pointList');
+  if(!points.length){ list.innerHTML=''; return; }
+  list.innerHTML = [...points].reverse().map((pt,ri)=>{
+    const i = points.length-1-ri;
+    const depths = ['3"','6"','9"','12"','15"','18"'];
+    const vals = [pt.psi3,pt.psi6,pt.psi9,pt.psi12,pt.psi15,pt.psi18];
+    const badges = depths.map((d,j)=>{
+      const v=vals[j]; const c=psiClass(v);
+      return `<span class="badge ${c}">${d}${v!==''&&v!==undefined?' '+v+' psi':' —'}</span>`;
+    }).join('');
+    return `<div class="point-card">
+      <div class="point-header">
+        <span class="point-id">${pt.pointId}</span>
+        <button class="btn btn-danger btn-sm" onclick="removePoint(${i})">Remove</button>
+      </div>
+      <div class="point-meta">${pt.lat}, ${pt.lon} &nbsp;|&nbsp; Tip: ${pt.tip||'—'} &nbsp;|&nbsp; ${pt.locDesc||'No location desc'}</div>
+      <div class="psi-badges">${badges}</div>
+      ${pt.notes?`<div class="point-note">${pt.notes}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── SURVEY HEADER ─────────────────────────────────────────────────────────────
+function getSurveyHeader(){
+  return {
+    surveyId:    document.getElementById('surveyId').value,
+    date:        document.getElementById('surveyDate').value,
+    clientName:  document.getElementById('clientName').value,
+    property:    document.getElementById('property').value,
+    operator:    document.getElementById('operator').value,
+    moisture:    document.getElementById('moisture').value,
+    tipTestSmall:document.getElementById('tipSmall').value,
+    tipTestLarge:document.getElementById('tipLarge').value,
+    tipSelected: document.getElementById('tipSelected').value,
+    tipNote:     document.getElementById('tipNote').value
+  };
+}
+
+// ── CSV BUILDER ───────────────────────────────────────────────────────────────
+function buildCSV(){
+  const h = getSurveyHeader();
+  const cols = [
+    'Survey_ID','Date','Client_Name','Property','Operator','Moisture_Condition',
+    'Tip_Test_Small_PSI','Tip_Test_Large_PSI','Tip_Selected','Tip_Selection_Note',
+    'Point_ID','Latitude','Longitude','Tip_Used',
+    'PSI_3in','PSI_6in','PSI_9in','PSI_12in','PSI_15in','PSI_18in',
+    'Soil_Horizon','Location_Description','Notes'
+  ];
+  const rows = [cols.join(',')];
+  points.forEach(pt=>{
+    rows.push([
+      q(h.surveyId),q(h.date),q(h.clientName),q(h.property),q(h.operator),q(h.moisture),
+      h.tipTestSmall,h.tipTestLarge,q(h.tipSelected),q(h.tipNote),
+      q(pt.pointId),pt.lat,pt.lon,q(pt.tip),
+      pt.psi3,pt.psi6,pt.psi9,pt.psi12,pt.psi15,pt.psi18,
+      q(pt.horizon),q(pt.locDesc),q(pt.notes)
+    ].join(','));
+  });
+  return rows.join('\n');
+}
+
+function csvFilename(){
+  const h = getSurveyHeader();
+  const client = (h.clientName||'Survey').replace(/[^a-z0-9]/gi,'_');
+  return (h.surveyId||'ATX_Compaction')+'_'+client+'.csv';
+}
+
+function q(v){
+  if(v===undefined||v===null) return '';
+  v=String(v);
+  if(v.includes(',')||v.includes('"')||v.includes('\n')) return '"'+v.replace(/"/g,'""')+'"';
+  return v;
+}
+
+// ── EXPORT: LOCAL ─────────────────────────────────────────────────────────────
+function exportLocal(){
+  if(!points.length){ alert('No points logged yet.'); return; }
+  const blob = new Blob([buildCSV()],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=csvFilename(); a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── EXPORT: GOOGLE DRIVE ──────────────────────────────────────────────────────
+async function exportToDrive(){
+  if(!points.length){ alert('No points logged yet.'); return; }
+  if(!accessToken){ showDriveStatus('Connect to Google Drive first using the button in the header','info'); return; }
+  showDriveStatus('Locating Drive folder...','info');
+  try{
+    const folderId = await getOrCreateFolderPath(DRIVE_FOLDER_PATH);
+    showDriveStatus('Uploading CSV...','info');
+    await uploadCSVtoDrive(folderId);
+    showDriveStatus('CSV saved to Field Data / ATX Field Compaction Surveys in Google Drive','success');
+    setTimeout(()=>hideDriveStatus(),5000);
+  }catch(e){
+    showDriveStatus('Export failed: '+e.message,'error');
+  }
+}
+
+async function getOrCreateFolderPath(pathParts){
+  let parentId = 'root';
+  for(const name of pathParts){
+    parentId = await getOrCreateFolder(name, parentId);
+  }
+  return parentId;
+}
+
+async function getOrCreateFolder(name, parentId){
+  const q = `name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`;
+  const res = await gdriveRequest('GET', `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
+  if(res.files && res.files.length > 0) return res.files[0].id;
+  const created = await gdriveRequest('POST','https://www.googleapis.com/drive/v3/files',{
+    name, mimeType:'application/vnd.google-apps.folder',
+    parents:[parentId]
+  });
+  return created.id;
+}
+
+async function uploadCSVtoDrive(folderId){
+  const csv = buildCSV();
+  const filename = csvFilename();
+  const meta = JSON.stringify({name:filename, parents:[folderId], mimeType:'text/csv'});
+  const body = new Blob([
+    '--boundary\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n',
+    meta,
+    '\r\n--boundary\r\nContent-Type: text/csv\r\n\r\n',
+    csv,
+    '\r\n--boundary--'
+  ],{type:'multipart/related; boundary=boundary'});
+  const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'multipart/related; boundary=boundary'},
+    body
+  });
+  if(!res.ok) throw new Error('Drive upload failed: '+res.status);
+  return res.json();
+}
+
+async function gdriveRequest(method, url, body){
+  const opts = {
+    method,
+    headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'}
+  };
+  if(body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  if(!res.ok){
+    const err = await res.json().catch(()=>({}));
+    throw new Error((err.error&&err.error.message)||res.status);
+  }
+  return res.json();
+}
+
+// ── SESSION PERSISTENCE ───────────────────────────────────────────────────────
+function saveSession(){
+  try{
+    localStorage.setItem('atx_compaction_v2', JSON.stringify({
+      survey: getSurveyHeader(), points
+    }));
+  }catch(e){}
+}
+
+function loadSession(){
+  try{
+    const raw = localStorage.getItem('atx_compaction_v2');
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    if(data.points && data.points.length > 0){
+      if(confirm('Resume previous session? ('+data.points.length+' point(s) found)')){
+        points = data.points;
+        const s = data.survey||{};
+        ['clientName','property','operator','moisture','tipNote'].forEach(id=>{
+          if(s[id]) document.getElementById(id).value=s[id];
+        });
+        if(s.tipTestSmall) document.getElementById('tipSmall').value=s.tipTestSmall;
+        if(s.tipTestLarge) document.getElementById('tipLarge').value=s.tipTestLarge;
+        if(s.tipSelected)  document.getElementById('tipSelected').value=s.tipSelected;
+        if(s.moisture)     document.getElementById('moisture').value=s.moisture;
+        renderPoints();
+        updatePtId();
+        onSurveyTipChange();
+      }
+    }
+  }catch(e){}
+}
+
+function exportBackup(){
+  const data = {survey:getSurveyHeader(), points, exported:new Date().toISOString()};
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=(document.getElementById('surveyId').value||'ATX_Session')+'_backup.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function clearAll(){
+  if(!confirm('Clear all points and survey data? This cannot be undone.')) return;
+  points=[];
+  localStorage.removeItem('atx_compaction_v2');
+  renderPoints();
+  updatePtId();
+  flashSaved();
+}
+
+// ── UI HELPERS ────────────────────────────────────────────────────────────────
+function flashSaved(){
+  const el = document.getElementById('saveIndicator');
+  el.classList.add('visible');
+  setTimeout(()=>el.classList.remove('visible'),2000);
+}
+
+function showDriveStatus(msg, type){
+  const el = document.getElementById('driveStatus');
+  el.textContent = msg;
+  el.className = 'drive-status '+type;
+}
+
+function hideDriveStatus(){
+  document.getElementById('driveStatus').className='drive-status';
+}
+
+init();
+</script>
+</body>
+</html>
