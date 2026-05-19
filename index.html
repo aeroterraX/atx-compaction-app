@@ -2,45 +2,42 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ATX Compaction Field App</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
-    --navy:#00284B;
-    --orange:#F37021;
-    --olive:#C7E100;
-    --olive-dark:#9aad00;
-    --white:#ffffff;
-    --off-white:#F8F6F2;
-    --light-gray:#e8e6e2;
-    --mid-gray:#888780;
-    --text:#1a1a1a;
-    --text-secondary:#555;
-    --green-bg:#EAF3DE;--green-border:#639922;--green-text:#3B6D11;
-    --yellow-bg:#FAEEDA;--yellow-border:#BA7517;--yellow-text:#854F0B;
-    --red-bg:#FCEBEB;--red-border:#A32D2D;--red-text:#A32D2D;
+    --navy:#00284B;--navy-light:#003a6b;
+    --orange:#F37021;--orange-light:#FFF3E0;
+    --olive:#C7E100;--olive-dark:#9aad00;
+    --white:#ffffff;--off-white:#F8F6F2;
+    --light-gray:#e8e6e2;--mid-gray:#888780;
+    --text:#1a1a1a;--text-secondary:#555;
+    --zone-green:#2E7D32;--zone-green-bg:#C8E6C9;--zone-green-border:#388E3C;
+    --zone-yellow:#F9A825;--zone-yellow-bg:#FFF9C4;--zone-yellow-border:#F57F17;
+    --zone-red:#C62828;--zone-red-bg:#FFCDD2;--zone-red-border:#B71C1C;
+    --zone-dne:#4A148C;--zone-dne-bg:#E1BEE7;--zone-dne-border:#6A1B9A;
+    --skip-bg:#FFF3E0;--skip-border:#E65100;--skip-text:#BF360C;
+    --complete-bg:#E8F5E9;--complete-border:#2E7D32;
+    --pending-bg:#ECEFF1;--pending-border:#90A4AE;
+    --qc-bg:#FFF8E1;--qc-border:#FF8F00;--qc-text:#E65100;
     --radius:8px;--radius-lg:12px;
   }
-  body{font-family:'Segoe UI',Arial,sans-serif;font-size:15px;color:var(--text);background:var(--off-white);min-height:100vh}
+  body{font-family:'Segoe UI',Arial,sans-serif;font-size:15px;color:var(--text);background:var(--off-white);min-height:100vh;-webkit-user-select:none;user-select:none}
 
-  /* HEADER */
   .app-header{background:var(--navy);color:var(--white);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
-  .app-header .brand{font-size:13px;font-weight:600;letter-spacing:0.05em;color:var(--olive)}
+  .app-header .brand{font-size:11px;font-weight:600;letter-spacing:0.07em;color:var(--olive)}
   .app-header .title{font-size:15px;font-weight:600}
   .app-header .auth-btn{background:transparent;border:1px solid rgba(255,255,255,0.3);color:var(--white);padding:6px 12px;border-radius:var(--radius);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px}
   .app-header .auth-btn:hover{background:rgba(255,255,255,0.1)}
   .auth-status{width:8px;height:8px;border-radius:50%;background:#ccc;flex-shrink:0}
   .auth-status.connected{background:var(--olive)}
 
-  /* MAIN */
   .main{max-width:680px;margin:0 auto;padding:12px 12px 80px}
 
-  /* SECTIONS */
   .section{background:var(--white);border:1px solid var(--light-gray);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:12px}
   .section-title{font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--olive)}
 
-  /* FORMS */
   .field-row{display:grid;gap:10px;margin-bottom:10px}
   .field-row.two{grid-template-columns:1fr 1fr}
   .field-row.three{grid-template-columns:1fr 1fr 1fr}
@@ -51,33 +48,49 @@
     background:var(--white);color:var(--text);
     -webkit-appearance:none;appearance:none
   }
-  .field-group input:focus,.field-group select:focus,.field-group textarea:focus{
-    outline:none;border-color:var(--navy);box-shadow:0 0 0 2px rgba(0,40,75,0.1)
-  }
+  .field-group input:focus,.field-group select:focus,.field-group textarea:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 2px rgba(0,40,75,0.1)}
   .field-group input[readonly]{background:var(--off-white);color:var(--mid-gray)}
   .field-group textarea{resize:vertical;min-height:60px}
   select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
 
-  /* PSI GRID */
-  .psi-section-label{font-size:12px;color:var(--text-secondary);margin-bottom:8px;padding:6px 10px;background:var(--off-white);border-radius:var(--radius);border-left:3px solid var(--navy)}
-  .psi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
-  .psi-cell label{display:block;font-size:11px;font-weight:500;color:var(--text-secondary);margin-bottom:3px}
-  .psi-cell input{width:100%;font-size:15px;padding:8px;border:1px solid var(--light-gray);border-radius:var(--radius);text-align:center;font-weight:500}
-  .psi-cell input.green{border-color:var(--green-border);background:var(--green-bg);color:var(--green-text)}
-  .psi-cell input.yellow{border-color:var(--yellow-border);background:var(--yellow-bg);color:var(--yellow-text)}
-  .psi-cell input.red{border-color:var(--red-border);background:var(--red-bg);color:var(--red-text)}
+  /* ZONE BUTTONS */
+  .zone-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:6px}
+  .zone-col{display:flex;flex-direction:column;gap:4px;align-items:center}
+  .zone-col-label{font-size:11px;font-weight:700;color:var(--navy);text-align:center;padding:4px 0;background:var(--off-white);border-radius:4px;width:100%}
+  .zone-btn{
+    width:100%;aspect-ratio:1;min-height:48px;
+    border:2px solid var(--light-gray);border-radius:var(--radius);
+    font-size:10px;font-weight:700;letter-spacing:0.03em;
+    cursor:pointer;transition:all 0.1s;
+    display:flex;align-items:center;justify-content:center;
+    -webkit-tap-highlight-color:transparent;
+    background:var(--white);color:var(--mid-gray);
+  }
+  .zone-btn:active{transform:scale(0.93)}
+  .zone-btn.selected{box-shadow:0 0 0 3px rgba(0,40,75,0.3)}
+  .zone-btn[data-zone="green"]{border-color:var(--zone-green-border)}
+  .zone-btn[data-zone="green"].selected{background:var(--zone-green);color:var(--white);border-color:var(--zone-green)}
+  .zone-btn[data-zone="yellow"]{border-color:var(--zone-yellow-border)}
+  .zone-btn[data-zone="yellow"].selected{background:var(--zone-yellow);color:var(--white);border-color:var(--zone-yellow)}
+  .zone-btn[data-zone="red"]{border-color:var(--zone-red-border)}
+  .zone-btn[data-zone="red"].selected{background:var(--zone-red);color:var(--white);border-color:var(--zone-red)}
+  .zone-btn[data-zone="dne"]{border-color:var(--zone-dne-border)}
+  .zone-btn[data-zone="dne"].selected{background:var(--zone-dne);color:var(--white);border-color:var(--zone-dne)}
 
   /* BUTTONS */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:var(--radius);border:1px solid var(--light-gray);background:var(--white);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent}
   .btn:active{transform:scale(0.97)}
   .btn-primary{background:var(--navy);border-color:var(--navy);color:var(--white)}
-  .btn-primary:hover{background:#003a6b}
-  .btn-export{background:var(--olive);border-color:var(--olive-dark);color:var(--navy)}
+  .btn-primary:hover{background:var(--navy-light)}
+  .btn-export{background:var(--olive);border-color:var(--olive-dark);color:var(--navy);font-weight:600}
   .btn-export:hover{background:var(--olive-dark)}
-  .btn-danger{color:var(--red-text);border-color:var(--red-border)}
-  .btn-danger:hover{background:var(--red-bg)}
+  .btn-danger{color:var(--zone-red);border-color:var(--zone-red-border)}
+  .btn-danger:hover{background:var(--zone-red-bg)}
+  .btn-skip{background:var(--skip-bg);border-color:var(--skip-border);color:var(--skip-text);font-weight:600}
   .btn-sm{padding:6px 12px;font-size:12px}
+  .btn-lg{padding:14px 24px;font-size:16px;width:100%}
   .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .btn-row.spread{justify-content:space-between}
 
   /* STATUS BAR */
   .status-bar{background:var(--navy);color:var(--white);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
@@ -86,34 +99,88 @@
   .save-indicator.visible{opacity:1}
 
   /* POINT CARDS */
-  .point-card{border:1px solid var(--light-gray);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;background:var(--off-white)}
-  .point-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  .point-id{font-size:13px;font-weight:600;color:var(--navy)}
-  .point-meta{font-size:12px;color:var(--text-secondary);margin-bottom:6px}
-  .psi-badges{display:flex;gap:5px;flex-wrap:wrap}
-  .badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px}
-  .badge.green{background:var(--green-bg);color:var(--green-text);border:1px solid var(--green-border)}
-  .badge.yellow{background:var(--yellow-bg);color:var(--yellow-text);border:1px solid var(--yellow-border)}
-  .badge.red{background:var(--red-bg);color:var(--red-text);border:1px solid var(--red-border)}
-  .badge.empty{background:var(--light-gray);color:var(--mid-gray)}
-  .point-note{font-size:12px;color:var(--text-secondary);margin-top:5px;font-style:italic}
+  .point-card{border:1px solid var(--light-gray);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:border-color 0.15s}
+  .point-card.active{border-color:var(--navy);border-width:2px;background:var(--white)}
+  .point-card.complete{border-left:4px solid var(--zone-green);background:var(--complete-bg)}
+  .point-card.skipped{border-left:4px solid var(--skip-border);background:var(--skip-bg)}
+  .point-card.pending{border-left:4px solid var(--pending-border);background:var(--pending-bg)}
+  .point-card.qc-flag{border-right:4px solid var(--orange)}
+  .point-header{display:flex;justify-content:space-between;align-items:center}
+  .point-id{font-size:14px;font-weight:700;color:var(--navy)}
+  .point-grid-id{font-size:12px;color:var(--text-secondary);font-weight:500;margin-left:6px}
+  .point-meta{font-size:11px;color:var(--text-secondary);margin-top:3px}
+  .point-status-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:0.05em}
+  .point-status-badge.complete{background:var(--zone-green);color:var(--white)}
+  .point-status-badge.skipped{background:var(--skip-border);color:var(--white)}
+  .point-status-badge.pending{background:var(--pending-border);color:var(--white)}
+  .qc-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--orange);color:var(--white);margin-left:4px}
+  .zone-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+  .zbadge{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;color:var(--white)}
+  .zbadge.green{background:var(--zone-green)}.zbadge.yellow{background:var(--zone-yellow)}.zbadge.red{background:var(--zone-red)}.zbadge.dne{background:var(--zone-dne)}.zbadge.empty{background:var(--mid-gray)}
+
+  /* GPS */
+  .gps-bar{background:var(--navy);color:var(--white);border-radius:var(--radius);padding:8px 14px;margin-bottom:12px;font-size:12px;display:flex;justify-content:space-between;align-items:center}
+  .gps-left{display:flex;align-items:center}
+  .gps-dot{width:8px;height:8px;border-radius:50%;margin-right:6px;flex-shrink:0}
+  .gps-dot.active{background:var(--olive);animation:pulse 2s infinite}
+  .gps-dot.inactive{background:#ccc}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+  /* IMPORT */
+  .import-zone{border:2px dashed var(--light-gray);border-radius:var(--radius-lg);padding:20px;text-align:center;cursor:pointer;transition:border-color 0.2s}
+  .import-zone:hover{border-color:var(--navy)}
+  .import-zone.loaded{border-color:var(--olive);border-style:solid;background:var(--complete-bg)}
+  .import-label{font-size:14px;color:var(--text-secondary);margin-bottom:4px}
+  .import-count{font-size:12px;color:var(--zone-green);font-weight:600}
+  .import-file-input{display:none}
+
+  /* QC SETUP */
+  .qc-setup{background:var(--qc-bg);border:2px solid var(--qc-border);border-radius:var(--radius-lg);padding:16px;margin-bottom:12px}
+  .qc-setup-title{font-size:13px;font-weight:700;color:var(--qc-text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .qc-grid-list{margin:10px 0;max-height:200px;overflow-y:auto}
+  .qc-cell-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--white);border:1px solid var(--light-gray);border-radius:var(--radius);margin-bottom:4px}
+  .qc-cell-label{font-size:13px;font-weight:600;color:var(--navy)}
+  .qc-cell-pts{font-size:11px;color:var(--text-secondary)}
+  .qc-cell-actions{display:flex;gap:6px}
+
+  /* QC ALERT */
+  .qc-alert{background:var(--qc-bg);border:2px solid var(--orange);border-radius:var(--radius);padding:12px;margin-bottom:12px}
+  .qc-alert-title{font-size:13px;font-weight:700;color:var(--qc-text);margin-bottom:6px}
+  .qc-alert-item{font-size:12px;color:var(--qc-text);padding:2px 0}
+  .qc-checklist{margin-top:10px}
+  .qc-check-row{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;color:var(--text)}
+  .qc-check-row input[type="checkbox"]{width:20px;height:20px;accent-color:var(--orange)}
 
   /* TIP GUIDANCE */
   .tip-guidance{font-size:12px;color:var(--text-secondary);margin-top:6px;padding:8px 10px;background:var(--off-white);border-radius:var(--radius);border-left:3px solid var(--orange)}
-
-  /* DIVIDER */
   .divider{height:1px;background:var(--light-gray);margin:12px 0}
 
   /* DRIVE STATUS */
   .drive-status{font-size:12px;padding:8px 12px;border-radius:var(--radius);margin-bottom:12px;display:none}
-  .drive-status.success{background:var(--green-bg);color:var(--green-text);border:1px solid var(--green-border);display:block}
-  .drive-status.error{background:var(--red-bg);color:var(--red-text);border:1px solid var(--red-border);display:block}
+  .drive-status.success{background:var(--complete-bg);color:var(--zone-green);border:1px solid var(--zone-green-border);display:block}
+  .drive-status.error{background:var(--zone-red-bg);color:var(--zone-red);border:1px solid var(--zone-red-border);display:block}
   .drive-status.info{background:#E6F1FB;color:#185FA5;border:1px solid #B5D4F4;display:block}
 
-  /* RESPONSIVE */
+  .proximity{font-size:11px;color:var(--orange);font-weight:600}
+
+  /* SKIP DIALOG */
+  .skip-dialog{background:var(--skip-bg);border:1px solid var(--skip-border);border-radius:var(--radius);padding:12px;margin-top:10px}
+  .skip-dialog label{font-size:12px;font-weight:600;color:var(--skip-text);margin-bottom:6px;display:block}
+
+  /* FILTER TABS */
+  .filter-tabs{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+  .filter-tab{font-size:11px;padding:4px 10px;border-radius:12px;border:1px solid var(--light-gray);background:var(--white);cursor:pointer;font-weight:500;color:var(--text-secondary)}
+  .filter-tab.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+
+  /* OVERLAY */
+  .overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+  .overlay-content{background:var(--white);border-radius:var(--radius-lg);padding:20px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto}
+  .overlay-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:12px}
+
   @media(max-width:480px){
     .field-row.two,.field-row.three{grid-template-columns:1fr}
-    .psi-grid{grid-template-columns:repeat(2,1fr)}
+    .zone-grid{grid-template-columns:repeat(3,1fr)}
+    .zone-grid .zone-col:nth-child(n+4){margin-top:4px}
   }
 </style>
 </head>
@@ -135,15 +202,15 @@
   <div class="drive-status" id="driveStatus"></div>
 
   <!-- SURVEY HEADER -->
-  <div class="section">
-    <div class="section-title">Survey header</div>
+  <div class="section" id="surveySection">
+    <div class="section-title">Survey Header</div>
     <div class="field-row two">
       <div class="field-group"><label>Survey ID</label><input type="text" id="surveyId" readonly></div>
       <div class="field-group"><label>Date</label><input type="date" id="surveyDate"></div>
     </div>
     <div class="field-row two">
       <div class="field-group"><label>Client name</label><input type="text" id="clientName" placeholder="Last, First" oninput="saveSession()"></div>
-      <div class="field-group"><label>Property / parcel</label><input type="text" id="property" placeholder="Name or ID" oninput="saveSession()"></div>
+      <div class="field-group"><label>Property / Tract</label><input type="text" id="property" placeholder="Name or ID" oninput="saveSession()"></div>
     </div>
     <div class="field-row two">
       <div class="field-group"><label>Operator</label><input type="text" id="operator" placeholder="Your name" oninput="saveSession()"></div>
@@ -158,17 +225,42 @@
     </div>
   </div>
 
+  <!-- CSV IMPORT -->
+  <div class="section" id="importSection">
+    <div class="section-title">Point Import</div>
+    <div class="import-zone" id="importZone" onclick="document.getElementById('csvFile').click()">
+      <div class="import-label" id="importLabel">Tap to load QGIS subgrid CSV</div>
+      <div class="import-count" id="importCount"></div>
+    </div>
+    <input type="file" id="csvFile" class="import-file-input" accept=".csv" onchange="handleCSVImport(event)">
+    <div class="tip-guidance" style="margin-top:10px">Import the subgrid centroid CSV exported from QGIS (AS_XY, EPSG:4326). Requires X (Longitude) and Y (Latitude) columns.</div>
+  </div>
+
   <!-- TIP SELECTION TEST -->
   <div class="section">
-    <div class="section-title">Tip selection test — ASAE S313.3</div>
+    <div class="section-title">Tip Selection Test — ASAE S313.3</div>
     <div class="field-row three">
-      <div class="field-group"><label>Small tip (1/2") reading</label><input type="number" id="tipSmall" min="0" max="300" placeholder="psi" oninput="autoSelectTip();saveSession()"></div>
-      <div class="field-group"><label>Large tip (3/4") reading</label><input type="number" id="tipLarge" min="0" max="300" placeholder="psi" oninput="autoSelectTip();saveSession()"></div>
-      <div class="field-group"><label>Tip selected for survey</label>
+      <div class="field-group"><label>Small tip (1/2")</label>
+        <select id="tipSmall" onchange="autoSelectTip();saveSession()">
+          <option value="">— zone —</option>
+          <option value="green">Green</option>
+          <option value="yellow">Yellow</option>
+          <option value="red">Red</option>
+        </select>
+      </div>
+      <div class="field-group"><label>Large tip (3/4")</label>
+        <select id="tipLarge" onchange="saveSession()">
+          <option value="">— zone —</option>
+          <option value="green">Green</option>
+          <option value="yellow">Yellow</option>
+          <option value="red">Red</option>
+        </select>
+      </div>
+      <div class="field-group"><label>Tip for survey</label>
         <select id="tipSelected" onchange="onSurveyTipChange();saveSession()">
           <option value="">— select —</option>
-          <option value='Small (1/2")'>Small (1/2") — firm soil default</option>
-          <option value='Large (3/4")'>Large (3/4") — loose / soft soil</option>
+          <option value="Small (1/2&quot;)">Small (1/2") — firm soil</option>
+          <option value="Large (3/4&quot;)">Large (3/4") — loose soil</option>
         </select>
       </div>
     </div>
@@ -178,53 +270,158 @@
     <div class="tip-guidance">Per manufacturer (Agratronix, ASAE S313.3): start with small tip (1/2") as default. Switch to large tip (3/4") if readings appear very low or soil is very loose.</div>
   </div>
 
-  <!-- SAMPLE POINT ENTRY -->
-  <div class="section">
-    <div class="section-title">Sample point entry</div>
-    <div class="field-row two">
-      <div class="field-group"><label>Point ID</label><input type="text" id="ptId" readonly></div>
-      <div class="field-group"><label>Tip used at this point</label>
-        <select id="ptTip">
-          <option value="">— select —</option>
-          <option value='Small (1/2")'>Small (1/2")</option>
-          <option value='Large (3/4")'>Large (3/4")</option>
-        </select>
-      </div>
+  <!-- GPS STATUS -->
+  <div class="gps-bar" id="gpsBar">
+    <div class="gps-left">
+      <span class="gps-dot inactive" id="gpsDot"></span>
+      <span id="gpsLabel">GPS: acquiring...</span>
     </div>
-    <div class="field-row two">
-      <div class="field-group"><label>Latitude (decimal degrees)</label><input type="number" id="lat" step="0.000001" placeholder="e.g. 37.891234"></div>
-      <div class="field-group"><label>Longitude (decimal degrees)</label><input type="number" id="lon" step="0.000001" placeholder="e.g. -91.234567"></div>
-    </div>
-    <div class="divider"></div>
-    <div class="psi-section-label">PSI readings — color updates by zone: green 0–200 / yellow 200–300 / red 300+</div>
-    <div class="psi-grid">
-      <div class="psi-cell"><label>3" depth</label><input type="number" id="p3" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
-      <div class="psi-cell"><label>6" depth</label><input type="number" id="p6" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
-      <div class="psi-cell"><label>9" depth</label><input type="number" id="p9" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
-      <div class="psi-cell"><label>12" depth</label><input type="number" id="p12" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
-      <div class="psi-cell"><label>15" depth</label><input type="number" id="p15" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
-      <div class="psi-cell"><label>18" depth</label><input type="number" id="p18" min="0" max="300" placeholder="psi" oninput="colorPsi(this)"></div>
-    </div>
-    <div class="divider"></div>
-    <div class="field-row two">
-      <div class="field-group"><label>Soil horizon</label><input type="text" id="horizon" placeholder="e.g. A, B, C"></div>
-      <div class="field-group"><label>Location description</label><input type="text" id="locDesc" placeholder="e.g. NW corner near fence line"></div>
-    </div>
-    <div class="field-row">
-      <div class="field-group"><label>Notes</label><textarea id="notes" placeholder="Observations, anomalies, surface conditions at this point"></textarea></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="addPoint()">+ Add point</button>
-      <button class="btn" onclick="clearPointForm()">Clear form</button>
-    </div>
+    <span id="gpsCoords"></span>
   </div>
 
-  <!-- STATUS + POINT LIST -->
+  <!-- STATUS BAR -->
   <div class="status-bar">
-    <div>Points logged: <span class="count" id="ptCount">0</span></div>
+    <div>
+      <span class="count" id="ptComplete">0</span> complete &nbsp;|&nbsp;
+      <span class="count" id="ptSkipped">0</span> skipped &nbsp;|&nbsp;
+      <span class="count" id="ptPending">0</span> pending
+    </div>
     <div class="save-indicator" id="saveIndicator">Saved</div>
   </div>
 
+  <!-- FILTER TABS -->
+  <div class="filter-tabs" id="filterTabs">
+    <span class="filter-tab active" data-filter="all" onclick="setFilter('all')">All</span>
+    <span class="filter-tab" data-filter="nearest" onclick="setFilter('nearest')">Nearest</span>
+    <span class="filter-tab" data-filter="pending" onclick="setFilter('pending')">Pending</span>
+    <span class="filter-tab" data-filter="complete" onclick="setFilter('complete')">Complete</span>
+    <span class="filter-tab" data-filter="skipped" onclick="setFilter('skipped')">Skipped</span>
+    <span class="filter-tab" data-filter="qc" onclick="setFilter('qc')">QC Cells</span>
+  </div>
+
+  <!-- ACTIVE POINT ENTRY -->
+  <div class="section" id="activePointSection" style="display:none">
+    <div class="section-title" id="activePointTitle">Recording Point</div>
+
+    <!-- QC ALERT -->
+    <div class="qc-alert" id="qcAlert" style="display:none">
+      <div class="qc-alert-title">⚠ QC VALIDATION CELL</div>
+      <div class="qc-alert-item">● Split composite sample for wet lab</div>
+      <div class="qc-alert-item">● 10×10 ft vegetation photo required</div>
+      <div class="qc-alert-item">● Photograph four cores before compositing</div>
+    </div>
+
+    <div class="field-row two">
+      <div class="field-group"><label>Point ID</label><input type="text" id="apId" readonly></div>
+      <div class="field-group"><label>Grid Cell</label><input type="text" id="apGrid" readonly></div>
+    </div>
+    <div class="field-row two">
+      <div class="field-group"><label>Latitude</label><input type="text" id="apLat" readonly></div>
+      <div class="field-group"><label>Longitude</label><input type="text" id="apLon" readonly></div>
+    </div>
+    <div class="field-row two">
+      <div class="field-group"><label>Tip used at this point</label>
+        <select id="apTip">
+          <option value="">— select —</option>
+          <option value="Small (1/2&quot;)">Small (1/2")</option>
+          <option value="Large (3/4&quot;)">Large (3/4")</option>
+        </select>
+      </div>
+      <div class="field-group"><label>Distance from GPS</label><input type="text" id="apDist" readonly></div>
+    </div>
+    <div class="divider"></div>
+
+    <!-- ZONE INPUT -->
+    <div class="zone-grid">
+      <div class="zone-col">
+        <div class="zone-col-label">3"</div>
+        <button class="zone-btn" data-zone="green" data-depth="3" onclick="selectZone(this)">GRN</button>
+        <button class="zone-btn" data-zone="yellow" data-depth="3" onclick="selectZone(this)">YLW</button>
+        <button class="zone-btn" data-zone="red" data-depth="3" onclick="selectZone(this)">RED</button>
+        <button class="zone-btn" data-zone="dne" data-depth="3" onclick="selectZone(this)">DNE</button>
+      </div>
+      <div class="zone-col">
+        <div class="zone-col-label">6"</div>
+        <button class="zone-btn" data-zone="green" data-depth="6" onclick="selectZone(this)">GRN</button>
+        <button class="zone-btn" data-zone="yellow" data-depth="6" onclick="selectZone(this)">YLW</button>
+        <button class="zone-btn" data-zone="red" data-depth="6" onclick="selectZone(this)">RED</button>
+        <button class="zone-btn" data-zone="dne" data-depth="6" onclick="selectZone(this)">DNE</button>
+      </div>
+      <div class="zone-col">
+        <div class="zone-col-label">9"</div>
+        <button class="zone-btn" data-zone="green" data-depth="9" onclick="selectZone(this)">GRN</button>
+        <button class="zone-btn" data-zone="yellow" data-depth="9" onclick="selectZone(this)">YLW</button>
+        <button class="zone-btn" data-zone="red" data-depth="9" onclick="selectZone(this)">RED</button>
+        <button class="zone-btn" data-zone="dne" data-depth="9" onclick="selectZone(this)">DNE</button>
+      </div>
+      <div class="zone-col">
+        <div class="zone-col-label">12"</div>
+        <button class="zone-btn" data-zone="green" data-depth="12" onclick="selectZone(this)">GRN</button>
+        <button class="zone-btn" data-zone="yellow" data-depth="12" onclick="selectZone(this)">YLW</button>
+        <button class="zone-btn" data-zone="red" data-depth="12" onclick="selectZone(this)">RED</button>
+        <button class="zone-btn" data-zone="dne" data-depth="12" onclick="selectZone(this)">DNE</button>
+      </div>
+      <div class="zone-col">
+        <div class="zone-col-label">15"</div>
+        <button class="zone-btn" data-zone="green" data-depth="15" onclick="selectZone(this)">GRN</button>
+        <button class="zone-btn" data-zone="yellow" data-depth="15" onclick="selectZone(this)">YLW</button>
+        <button class="zone-btn" data-zone="red" data-depth="15" onclick="selectZone(this)">RED</button>
+        <button class="zone-btn" data-zone="dne" data-depth="15" onclick="selectZone(this)">DNE</button>
+      </div>
+      <div class="zone-col">
+        <div class="zone-col-label">18"</div>
+        <button class="zone-btn" data-zone="green" data-depth="18" onclick="selectZone(this)">GRN</button>
+        <button class="zone-btn" data-zone="yellow" data-depth="18" onclick="selectZone(this)">YLW</button>
+        <button class="zone-btn" data-zone="red" data-depth="18" onclick="selectZone(this)">RED</button>
+        <button class="zone-btn" data-zone="dne" data-depth="18" onclick="selectZone(this)">DNE</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="field-row">
+      <div class="field-group"><label>Notes</label><textarea id="apNotes" placeholder="Observations, anomalies, surface conditions"></textarea></div>
+    </div>
+
+    <!-- QC CHECKLIST (only for QC cells, shown when last point in cell) -->
+    <div class="qc-checklist" id="qcChecklist" style="display:none">
+      <div class="divider"></div>
+      <div class="qc-alert-title">QC Cell Completion Checklist</div>
+      <div class="qc-check-row"><input type="checkbox" id="qcSplitSample"><label for="qcSplitSample">Split composite sample prepared for wet lab</label></div>
+      <div class="qc-check-row"><input type="checkbox" id="qcVegPhoto"><label for="qcVegPhoto">10×10 ft vegetation photo taken</label></div>
+      <div class="qc-check-row"><input type="checkbox" id="qcCorePhoto"><label for="qcCorePhoto">Four cores photographed before compositing</label></div>
+    </div>
+
+    <div class="btn-row spread">
+      <button class="btn btn-primary btn-lg" onclick="savePoint()" style="flex:2">Save Point</button>
+      <button class="btn btn-skip" onclick="showSkipDialog()" style="flex:1">Skip</button>
+    </div>
+    <div class="skip-dialog" id="skipDialog" style="display:none">
+      <label>Reason for skipping this point:</label>
+      <select id="skipReason">
+        <option value="">— select reason —</option>
+        <option>Pond / water feature</option>
+        <option>Rock outcrop</option>
+        <option>Fence line / structure</option>
+        <option>Inaccessible terrain</option>
+        <option>Standing water</option>
+        <option>Road / trail</option>
+        <option>Livestock hazard</option>
+        <option>Other</option>
+      </select>
+      <div class="field-group" style="margin-top:8px">
+        <input type="text" id="skipNote" placeholder="Additional detail (optional)">
+      </div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-skip btn-sm" onclick="confirmSkip()">Confirm Skip</button>
+        <button class="btn btn-sm" onclick="hideSkipDialog()">Cancel</button>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sm" onclick="deselectPoint()">Close / Back to list</button>
+    </div>
+  </div>
+
+  <!-- POINT LIST -->
   <div id="pointList"></div>
 
   <!-- EXPORT -->
@@ -242,322 +439,660 @@
 
 </div>
 
+<!-- QC SETUP OVERLAY -->
+<div class="overlay" id="qcOverlay" style="display:none">
+  <div class="overlay-content">
+    <div class="overlay-title">QC Validation Cell Selection</div>
+    <div id="qcSetupBody"></div>
+  </div>
+</div>
+
 <!-- Google Identity Services -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script>
-const CLIENT_ID = '19039369574-0h7p66t10nn2vnlidumku1tq3h5ldjaa.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-const DRIVE_FOLDER_PATH = ['Field Data', 'ATX Field Compaction Surveys'];
+const CLIENT_ID='19039369574-0h7p66t10nn2vnlidumku1tq3h5ldjaa.apps.googleusercontent.com';
+const SCOPES='https://www.googleapis.com/auth/drive.file';
+const DRIVE_FOLDER_PATH=['Field Data','ATX Field Compaction Surveys'];
+const DEPTHS=['3','6','9','12','15','18'];
 
-let tokenClient;
-let accessToken = null;
-let points = [];
+const ZONE_PSI={
+  'Small (1/2")':{green:100,yellow:225,red:275,dne:300},
+  'Large (3/4")':{green:50,yellow:150,red:250,dne:300}
+};
+
+const QC_THRESHOLDS=[
+  {max:20,pct:10},{max:40,pct:8},{max:60,pct:7},{max:80,pct:6},{max:Infinity,pct:5}
+];
+
+let tokenClient,accessToken=null;
+let surveyPoints=[];
+let activePointIndex=-1;
+let currentFilter='all';
+let gpsPosition=null;
+let qcGridIds=[];
+let qcConfirmed=false;
+let qcCellChecks={};// {gridId:{split:bool,veg:bool,core:bool}}
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
 function init(){
-  const now = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  document.getElementById('surveyDate').value = now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());
-  document.getElementById('surveyId').value = 'ATX-SC-'+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'-'+Math.floor(Math.random()*1000).toString().padStart(3,'0');
-  updatePtId();
+  const now=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  document.getElementById('surveyDate').value=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());
+  document.getElementById('surveyId').value='ATX-SC-'+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'-'+Math.floor(Math.random()*1000).toString().padStart(3,'0');
   loadSession();
   initGoogleAuth();
+  startGPS();
+}
+
+// ── GPS ──────────────────────────────────────────────────────────────────────
+function startGPS(){
+  if(!navigator.geolocation){document.getElementById('gpsLabel').textContent='GPS: not available';return;}
+  navigator.geolocation.watchPosition(
+    pos=>{
+      gpsPosition={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy};
+      document.getElementById('gpsDot').className='gps-dot active';
+      document.getElementById('gpsLabel').textContent='GPS: locked';
+      document.getElementById('gpsCoords').textContent=gpsPosition.lat.toFixed(6)+', '+gpsPosition.lon.toFixed(6)+' (±'+Math.round(gpsPosition.acc)+'m)';
+      if(currentFilter==='nearest')renderPointList();
+    },
+    err=>{document.getElementById('gpsDot').className='gps-dot inactive';document.getElementById('gpsLabel').textContent='GPS: '+err.message;},
+    {enableHighAccuracy:true,maximumAge:5000,timeout:15000}
+  );
+}
+function distanceTo(lat,lon){
+  if(!gpsPosition)return Infinity;
+  const R=6371000,dLat=(lat-gpsPosition.lat)*Math.PI/180,dLon=(lon-gpsPosition.lon)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(gpsPosition.lat*Math.PI/180)*Math.cos(lat*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
 // ── GOOGLE AUTH ───────────────────────────────────────────────────────────────
 function initGoogleAuth(){
-  window.onGoogleLibraryLoad = () => {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: CLIENT_ID,
-      scope: SCOPES,
-      callback: (resp) => {
-        if(resp.error){ showDriveStatus('Authorization failed: '+resp.error,'error'); return; }
-        accessToken = resp.access_token;
-        setAuthUI(true);
-        showDriveStatus('Connected to Google Drive — ready to export','success');
-        setTimeout(()=>hideDriveStatus(),3000);
+  window.onGoogleLibraryLoad=()=>{
+    tokenClient=google.accounts.oauth2.initTokenClient({
+      client_id:CLIENT_ID,scope:SCOPES,
+      callback:resp=>{
+        if(resp.error){showDriveStatus('Auth failed: '+resp.error,'error');return;}
+        accessToken=resp.access_token;setAuthUI(true);
+        showDriveStatus('Connected to Google Drive','success');setTimeout(hideDriveStatus,3000);
       }
     });
   };
 }
-
 function handleAuth(){
-  if(accessToken){ accessToken=null; setAuthUI(false); return; }
-  if(tokenClient){ tokenClient.requestAccessToken(); }
-  else { showDriveStatus('Google auth library still loading — try again in a moment','info'); }
+  if(accessToken){accessToken=null;setAuthUI(false);return;}
+  if(tokenClient)tokenClient.requestAccessToken();
+  else showDriveStatus('Google auth loading — try again','info');
 }
-
-function setAuthUI(connected){
-  document.getElementById('authDot').className = 'auth-status'+(connected?' connected':'');
-  document.getElementById('authLabel').textContent = connected ? 'Drive connected' : 'Connect Drive';
+function setAuthUI(c){
+  document.getElementById('authDot').className='auth-status'+(c?' connected':'');
+  document.getElementById('authLabel').textContent=c?'Drive connected':'Connect Drive';
 }
 
 // ── TIP LOGIC ─────────────────────────────────────────────────────────────────
 function autoSelectTip(){
-  const small = parseFloat(document.getElementById('tipSmall').value);
-  if(!isNaN(small) && small < 100){
-    document.getElementById('tipSelected').value = 'Large (3/4")';
-    document.getElementById('tipNote').value = 'Small tip readings very low — switched to large tip per manufacturer guidance';
+  if(document.getElementById('tipSmall').value==='green'){
+    document.getElementById('tipSelected').value='Large (3/4")';
+    document.getElementById('tipNote').value='Small tip in green zone — switched to large tip per manufacturer guidance';
     onSurveyTipChange();
   }
 }
-
 function onSurveyTipChange(){
-  const selected = document.getElementById('tipSelected').value;
-  if(selected) document.getElementById('ptTip').value = selected;
+  const sel=document.getElementById('tipSelected').value;
+  if(sel)document.getElementById('apTip').value=sel;
 }
 
-// ── PSI COLOR ─────────────────────────────────────────────────────────────────
-function colorPsi(el){
-  el.classList.remove('green','yellow','red');
-  const v = parseFloat(el.value);
-  if(isNaN(v)||el.value==='') return;
-  if(v < 200) el.classList.add('green');
-  else if(v < 300) el.classList.add('yellow');
-  else el.classList.add('red');
-}
+// ── CSV IMPORT ────────────────────────────────────────────────────────────────
+function handleCSVImport(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const text=e.target.result;
+    const lines=text.split(/\r?\n/).filter(l=>l.trim());
+    if(lines.length<2){alert('CSV file appears empty.');return;}
 
-function psiClass(v){
-  if(v===''||v===undefined||v===null) return 'empty';
-  const n = parseFloat(v);
-  if(isNaN(n)) return 'empty';
-  if(n < 200) return 'green';
-  if(n < 300) return 'yellow';
-  return 'red';
-}
+    const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+    const findCol=(...names)=>{
+      for(const n of names){const i=headers.findIndex(h=>h.toLowerCase()===n.toLowerCase());if(i>=0)return i;}
+      return -1;
+    };
 
-// ── POINT MANAGEMENT ──────────────────────────────────────────────────────────
-function addPoint(){
-  const lat = document.getElementById('lat').value;
-  const lon = document.getElementById('lon').value;
-  if(!lat||!lon){ alert('Latitude and longitude are required.'); return; }
-  const pt = {
-    pointId: document.getElementById('ptId').value,
-    lat, lon,
-    tip: document.getElementById('ptTip').value,
-    psi3:  document.getElementById('p3').value,
-    psi6:  document.getElementById('p6').value,
-    psi9:  document.getElementById('p9').value,
-    psi12: document.getElementById('p12').value,
-    psi15: document.getElementById('p15').value,
-    psi18: document.getElementById('p18').value,
-    horizon: document.getElementById('horizon').value,
-    locDesc: document.getElementById('locDesc').value,
-    notes: document.getElementById('notes').value
+    const iPointID=findCol('Point_ID','point_id','Name','name');
+    const iGridID=findCol('Grid_ID','grid_id');
+    const iLabel=findCol('KML_Label','kml_label');
+    const iLat=findCol('Y','y','Latitude','latitude','lat');
+    const iLon=findCol('X','x','Longitude','longitude','lon','lng');
+
+    if(iLat<0||iLon<0){alert('CSV must contain X/Y or Latitude/Longitude columns.\n\nRe-export from QGIS with GEOMETRY set to AS_XY and CRS set to EPSG:4326.');return;}
+
+    const imported=[];
+    for(let r=1;r<lines.length;r++){
+      const cols=parseCSVLine(lines[r]);
+      if(cols.length<=Math.max(iLat,iLon))continue;
+      const lat=parseFloat(cols[iLat]);
+      const lon=parseFloat(cols[iLon]);
+      if(isNaN(lat)||isNaN(lon))continue;
+
+      imported.push({
+        pointId:iPointID>=0?cols[iPointID].trim():String(r),
+        gridId:iGridID>=0?cols[iGridID].trim():'',
+        kmlLabel:iLabel>=0?cols[iLabel].trim():'',
+        lat,lon,
+        status:'pending',
+        tip:'',zones:{},notes:'',
+        skipReason:'',skipNote:'',timestamp:'',
+        qcValidation:false
+      });
+    }
+
+    if(!imported.length){alert('No valid points found in CSV.');return;}
+    if(surveyPoints.length>0&&surveyPoints.some(p=>p.status!=='pending')){
+      if(!confirm('You have existing data. Importing will replace all points. Continue?'))return;
+    }
+
+    surveyPoints=imported;
+    document.getElementById('importZone').classList.add('loaded');
+    document.getElementById('importLabel').textContent=file.name;
+    document.getElementById('importCount').textContent=imported.length+' points loaded';
+
+    // Trigger QC setup
+    qcConfirmed=false;
+    qcGridIds=[];
+    qcCellChecks={};
+    showQCSetup();
+
+    renderPointList();
+    updateStatusCounts();
+    saveSession();
   };
-  points.push(pt);
-  renderPoints();
-  clearPointForm();
-  updatePtId();
+  reader.readAsText(file);
+}
+
+function parseCSVLine(line){
+  const result=[];let current='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(inQ){if(c==='"'&&line[i+1]==='"'){current+='"';i++;}else if(c==='"')inQ=false;else current+=c;}
+    else{if(c==='"')inQ=true;else if(c===','){result.push(current);current='';}else current+=c;}
+  }
+  result.push(current);return result;
+}
+
+// ── QC VALIDATION SETUP ───────────────────────────────────────────────────────
+function getUniqueGridIds(){
+  const ids=new Set();
+  surveyPoints.forEach(p=>{if(p.gridId)ids.add(p.gridId);});
+  return [...ids].sort((a,b)=>Number(a)-Number(b));
+}
+
+function getRecommendedPct(gridCount){
+  for(const t of QC_THRESHOLDS){if(gridCount<=t.max)return t.pct;}
+  return 5;
+}
+
+function showQCSetup(){
+  const allGrids=getUniqueGridIds();
+  if(allGrids.length===0){qcConfirmed=true;return;}
+
+  const recPct=getRecommendedPct(allGrids.length);
+  const recCount=Math.max(2,Math.ceil(allGrids.length*recPct/100));
+
+  // Random initial selection
+  const shuffled=[...allGrids];
+  for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}
+  qcGridIds=shuffled.slice(0,recCount);
+
+  renderQCSetup(allGrids,recPct,recCount);
+  document.getElementById('qcOverlay').style.display='flex';
+}
+
+function renderQCSetup(allGrids,recPct,recCount){
+  const gridCount=allGrids.length;
+  const ptsPerGrid={};
+  surveyPoints.forEach(p=>{if(p.gridId){ptsPerGrid[p.gridId]=(ptsPerGrid[p.gridId]||0)+1;}});
+
+  let html=`
+    <div style="margin-bottom:12px">
+      <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">
+        <strong>${gridCount}</strong> grid cells detected &nbsp;|&nbsp; 
+        Recommended: <strong>${recPct}%</strong> (${recCount} cells)
+      </div>
+      <div class="field-row two" style="margin-bottom:0">
+        <div class="field-group">
+          <label>QC validation rate</label>
+          <select id="qcPctSelect" onchange="updateQCCount()">
+            ${[5,6,7,8,9,10].map(p=>`<option value="${p}"${p===recPct?' selected':''}>${p}%${p===recPct?' (recommended)':''}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Cells to validate</label>
+          <input type="text" id="qcCountDisplay" readonly value="${qcGridIds.length} of ${gridCount}">
+        </div>
+      </div>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px">Selected QC cells:</div>
+    <div class="qc-grid-list" id="qcGridList">
+      ${qcGridIds.map(gid=>`
+        <div class="qc-cell-row" id="qcRow_${gid}">
+          <div>
+            <span class="qc-cell-label">G${gid}</span>
+            <span class="qc-cell-pts">${ptsPerGrid[gid]||0} points</span>
+          </div>
+          <div class="qc-cell-actions">
+            <button class="btn btn-sm btn-danger" onclick="rerollQCCell('${gid}')">Reroll</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn btn-primary btn-lg" onclick="confirmQCSetup()">Confirm QC Selection</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sm" onclick="skipQCSetup()">Skip QC validation for this survey</button>
+    </div>
+  `;
+  document.getElementById('qcSetupBody').innerHTML=html;
+}
+
+function updateQCCount(){
+  const allGrids=getUniqueGridIds();
+  const pct=parseInt(document.getElementById('qcPctSelect').value);
+  const count=Math.max(2,Math.ceil(allGrids.length*pct/100));
+  
+  // Re-randomize to new count
+  const available=allGrids.filter(g=>!qcGridIds.includes(g));
+  if(count>qcGridIds.length){
+    const shuffled=[...available];
+    for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}
+    qcGridIds=[...qcGridIds,...shuffled.slice(0,count-qcGridIds.length)];
+  }else if(count<qcGridIds.length){
+    qcGridIds=qcGridIds.slice(0,count);
+  }
+
+  const recPct=getRecommendedPct(allGrids.length);
+  renderQCSetup(allGrids,recPct,count);
+}
+
+function rerollQCCell(oldGid){
+  const allGrids=getUniqueGridIds();
+  const available=allGrids.filter(g=>!qcGridIds.includes(g));
+  if(available.length===0){alert('No available grid cells to swap.');return;}
+  const newGid=available[Math.floor(Math.random()*available.length)];
+  qcGridIds=qcGridIds.map(g=>g===oldGid?newGid:g);
+  const recPct=getRecommendedPct(allGrids.length);
+  renderQCSetup(allGrids,recPct,qcGridIds.length);
+}
+
+function confirmQCSetup(){
+  qcConfirmed=true;
+  surveyPoints.forEach(p=>{p.qcValidation=qcGridIds.includes(p.gridId);});
+  qcGridIds.forEach(gid=>{qcCellChecks[gid]={split:false,veg:false,core:false};});
+  document.getElementById('qcOverlay').style.display='none';
+  renderPointList();
+  saveSession();
+}
+
+function skipQCSetup(){
+  qcConfirmed=true;
+  qcGridIds=[];
+  surveyPoints.forEach(p=>{p.qcValidation=false;});
+  document.getElementById('qcOverlay').style.display='none';
+  renderPointList();
+  saveSession();
+}
+
+// ── ZONE SELECTION ────────────────────────────────────────────────────────────
+function selectZone(btn){
+  btn.parentElement.querySelectorAll('.zone-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function getSelectedZones(){
+  const zones={};
+  DEPTHS.forEach(d=>{const col=document.querySelector(`.zone-btn.selected[data-depth="${d}"]`);if(col)zones[d]=col.dataset.zone;});
+  return zones;
+}
+function clearZoneSelection(){document.querySelectorAll('.zone-btn').forEach(b=>b.classList.remove('selected'));}
+function restoreZoneSelection(zones){
+  clearZoneSelection();
+  if(!zones)return;
+  Object.entries(zones).forEach(([d,z])=>{const btn=document.querySelector(`.zone-btn[data-depth="${d}"][data-zone="${z}"]`);if(btn)btn.classList.add('selected');});
+}
+
+// ── POINT SELECTION & RECORDING ───────────────────────────────────────────────
+function selectPoint(index){
+  activePointIndex=index;
+  const pt=surveyPoints[index];
+  document.getElementById('activePointSection').style.display='block';
+  document.getElementById('activePointTitle').textContent='Recording: '+(pt.kmlLabel||'P'+pt.pointId);
+  document.getElementById('apId').value=pt.pointId;
+  document.getElementById('apGrid').value=pt.gridId?'G'+pt.gridId:'—';
+  document.getElementById('apLat').value=pt.lat.toFixed(6);
+  document.getElementById('apLon').value=pt.lon.toFixed(6);
+  document.getElementById('apTip').value=pt.tip||document.getElementById('tipSelected').value||'';
+  document.getElementById('apNotes').value=pt.notes||'';
+
+  const dist=distanceTo(pt.lat,pt.lon);
+  document.getElementById('apDist').value=dist===Infinity?'No GPS':Math.round(dist)+'m';
+
+  // QC alert
+  document.getElementById('qcAlert').style.display=pt.qcValidation?'block':'none';
+
+  // QC checklist — show if this is the last pending point in a QC cell
+  const showChecklist=pt.qcValidation&&isLastPointInCell(index);
+  document.getElementById('qcChecklist').style.display=showChecklist?'block':'none';
+  if(showChecklist&&qcCellChecks[pt.gridId]){
+    document.getElementById('qcSplitSample').checked=qcCellChecks[pt.gridId].split||false;
+    document.getElementById('qcVegPhoto').checked=qcCellChecks[pt.gridId].veg||false;
+    document.getElementById('qcCorePhoto').checked=qcCellChecks[pt.gridId].core||false;
+  }
+
+  restoreZoneSelection(pt.zones);
+  hideSkipDialog();
+  document.getElementById('activePointSection').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function isLastPointInCell(index){
+  const pt=surveyPoints[index];
+  if(!pt.gridId)return false;
+  const cellPoints=surveyPoints.filter(p=>p.gridId===pt.gridId);
+  const pendingInCell=cellPoints.filter(p=>p.status==='pending');
+  return pendingInCell.length===1&&pendingInCell[0]===pt;
+}
+
+function savePoint(){
+  if(activePointIndex<0)return;
+  const pt=surveyPoints[activePointIndex];
+  const zones=getSelectedZones();
+  if(Object.keys(zones).length===0){alert('Record at least one depth zone before saving.');return;}
+
+  pt.zones=zones;
+  pt.tip=document.getElementById('apTip').value;
+  pt.notes=document.getElementById('apNotes').value;
+  pt.status='complete';
+  pt.timestamp=new Date().toISOString();
+
+  // Save QC checklist if visible
+  if(pt.qcValidation&&document.getElementById('qcChecklist').style.display!=='none'){
+    qcCellChecks[pt.gridId]={
+      split:document.getElementById('qcSplitSample').checked,
+      veg:document.getElementById('qcVegPhoto').checked,
+      core:document.getElementById('qcCorePhoto').checked
+    };
+  }
+
+  const nextIdx=findNextPending(activePointIndex);
+  deselectPoint();
+  renderPointList();
+  updateStatusCounts();
   saveSession();
   flashSaved();
+
+  if(nextIdx>=0)setTimeout(()=>selectPoint(nextIdx),300);
 }
 
-function removePoint(i){
-  if(!confirm('Remove '+points[i].pointId+'?')) return;
-  points.splice(i,1);
-  points.forEach((p,j)=>{ p.pointId='PT-'+String(j+1).padStart(3,'0'); });
-  renderPoints();
-  updatePtId();
+function findNextPending(fromIdx){
+  // First try next in same grid cell
+  const currentGrid=surveyPoints[fromIdx].gridId;
+  for(let i=fromIdx+1;i<surveyPoints.length;i++){
+    if(surveyPoints[i].gridId===currentGrid&&surveyPoints[i].status==='pending')return i;
+  }
+  // Then any next pending
+  for(let i=fromIdx+1;i<surveyPoints.length;i++){
+    if(surveyPoints[i].status==='pending')return i;
+  }
+  return -1;
+}
+
+function showSkipDialog(){document.getElementById('skipDialog').style.display='block';}
+function hideSkipDialog(){document.getElementById('skipDialog').style.display='none';document.getElementById('skipReason').value='';document.getElementById('skipNote').value='';}
+
+function confirmSkip(){
+  if(activePointIndex<0)return;
+  const reason=document.getElementById('skipReason').value;
+  if(!reason){alert('Select a skip reason.');return;}
+  const pt=surveyPoints[activePointIndex];
+  pt.status='skipped';
+  pt.skipReason=reason;
+  pt.skipNote=document.getElementById('skipNote').value;
+  pt.timestamp=new Date().toISOString();
+
+  const nextIdx=findNextPending(activePointIndex);
+  deselectPoint();
+  renderPointList();
+  updateStatusCounts();
   saveSession();
+  flashSaved();
+
+  if(nextIdx>=0)setTimeout(()=>selectPoint(nextIdx),300);
 }
 
-function updatePtId(){
-  document.getElementById('ptId').value = 'PT-'+String(points.length+1).padStart(3,'0');
+function deselectPoint(){
+  activePointIndex=-1;
+  document.getElementById('activePointSection').style.display='none';
+  clearZoneSelection();
+  hideSkipDialog();
 }
 
-function clearPointForm(){
-  ['lat','lon','p3','p6','p9','p12','p15','p18','horizon','locDesc','notes'].forEach(id=>{
-    const el = document.getElementById(id);
-    el.value='';
-    el.classList.remove('green','yellow','red');
-  });
-  document.getElementById('ptTip').value = document.getElementById('tipSelected').value || '';
+// ── POINT LIST ────────────────────────────────────────────────────────────────
+function setFilter(f){
+  currentFilter=f;
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.toggle('active',t.dataset.filter===f));
+  renderPointList();
 }
 
-function renderPoints(){
-  document.getElementById('ptCount').textContent = points.length;
-  const list = document.getElementById('pointList');
-  if(!points.length){ list.innerHTML=''; return; }
-  list.innerHTML = [...points].reverse().map((pt,ri)=>{
-    const i = points.length-1-ri;
-    const depths = ['3"','6"','9"','12"','15"','18"'];
-    const vals = [pt.psi3,pt.psi6,pt.psi9,pt.psi12,pt.psi15,pt.psi18];
-    const badges = depths.map((d,j)=>{
-      const v=vals[j]; const c=psiClass(v);
-      return `<span class="badge ${c}">${d}${v!==''&&v!==undefined?' '+v+' psi':' —'}</span>`;
-    }).join('');
-    return `<div class="point-card">
+function renderPointList(){
+  const list=document.getElementById('pointList');
+  if(!surveyPoints.length){list.innerHTML='';return;}
+
+  let filtered=surveyPoints.map((p,i)=>({...p,_idx:i}));
+
+  if(currentFilter==='pending')filtered=filtered.filter(p=>p.status==='pending');
+  else if(currentFilter==='complete')filtered=filtered.filter(p=>p.status==='complete');
+  else if(currentFilter==='skipped')filtered=filtered.filter(p=>p.status==='skipped');
+  else if(currentFilter==='qc')filtered=filtered.filter(p=>p.qcValidation);
+  else if(currentFilter==='nearest'){
+    filtered=filtered.filter(p=>p.status==='pending');
+    if(gpsPosition){filtered.forEach(p=>p._dist=distanceTo(p.lat,p.lon));filtered.sort((a,b)=>a._dist-b._dist);}
+  }
+
+  list.innerHTML=filtered.map(pt=>{
+    const dist=gpsPosition?Math.round(distanceTo(pt.lat,pt.lon)):null;
+    const label=pt.kmlLabel||'P'+pt.pointId;
+    const isActive=pt._idx===activePointIndex;
+
+    let badges='';
+    if(pt.status==='complete'&&pt.zones){
+      badges=DEPTHS.map(d=>{const z=pt.zones[d];return`<span class="zbadge ${z||'empty'}">${d}" ${z?z.toUpperCase():'—'}</span>`;}).join('');
+    }
+
+    let skipInfo='';
+    if(pt.status==='skipped')skipInfo=`<div class="point-meta" style="color:var(--skip-text)">${pt.skipReason}${pt.skipNote?' — '+pt.skipNote:''}</div>`;
+
+    return`<div class="point-card ${pt.status}${isActive?' active':''}${pt.qcValidation?' qc-flag':''}" onclick="selectPoint(${pt._idx})">
       <div class="point-header">
-        <span class="point-id">${pt.pointId}</span>
-        <button class="btn btn-danger btn-sm" onclick="removePoint(${i})">Remove</button>
+        <div>
+          <span class="point-id">${label}</span>
+          <span class="point-grid-id">Grid ${pt.gridId||'—'}</span>
+          ${pt.qcValidation?'<span class="qc-badge">QC</span>':''}
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${dist!==null?`<span class="proximity">${dist}m</span>`:''}
+          <span class="point-status-badge ${pt.status}">${pt.status}</span>
+        </div>
       </div>
-      <div class="point-meta">${pt.lat}, ${pt.lon} &nbsp;|&nbsp; Tip: ${pt.tip||'—'} &nbsp;|&nbsp; ${pt.locDesc||'No location desc'}</div>
-      <div class="psi-badges">${badges}</div>
-      ${pt.notes?`<div class="point-note">${pt.notes}</div>`:''}
+      <div class="point-meta">${pt.lat.toFixed(5)}, ${pt.lon.toFixed(5)}</div>
+      ${badges?`<div class="zone-badges">${badges}</div>`:''}
+      ${skipInfo}
     </div>`;
   }).join('');
 }
 
+function updateStatusCounts(){
+  document.getElementById('ptComplete').textContent=surveyPoints.filter(p=>p.status==='complete').length;
+  document.getElementById('ptSkipped').textContent=surveyPoints.filter(p=>p.status==='skipped').length;
+  document.getElementById('ptPending').textContent=surveyPoints.filter(p=>p.status==='pending').length;
+}
+
 // ── SURVEY HEADER ─────────────────────────────────────────────────────────────
 function getSurveyHeader(){
-  return {
-    surveyId:    document.getElementById('surveyId').value,
-    date:        document.getElementById('surveyDate').value,
-    clientName:  document.getElementById('clientName').value,
-    property:    document.getElementById('property').value,
-    operator:    document.getElementById('operator').value,
-    moisture:    document.getElementById('moisture').value,
+  return{
+    surveyId:document.getElementById('surveyId').value,
+    date:document.getElementById('surveyDate').value,
+    clientName:document.getElementById('clientName').value,
+    property:document.getElementById('property').value,
+    operator:document.getElementById('operator').value,
+    moisture:document.getElementById('moisture').value,
     tipTestSmall:document.getElementById('tipSmall').value,
     tipTestLarge:document.getElementById('tipLarge').value,
-    tipSelected: document.getElementById('tipSelected').value,
-    tipNote:     document.getElementById('tipNote').value
+    tipSelected:document.getElementById('tipSelected').value,
+    tipNote:document.getElementById('tipNote').value,
+    qcRate:qcGridIds.length>0?document.getElementById('qcPctSelect')?.value||'':'',
+    qcCellCount:qcGridIds.length,
+    qcCells:qcGridIds.join(';')
   };
 }
 
 // ── CSV BUILDER ───────────────────────────────────────────────────────────────
+function getAssignedPSI(zone,tip){
+  const map=ZONE_PSI[tip];
+  if(!map||!zone)return'';
+  return map[zone]!==undefined?map[zone]:'';
+}
+
 function buildCSV(){
-  const h = getSurveyHeader();
-  const cols = [
+  const h=getSurveyHeader();
+  const cols=[
     'Survey_ID','Date','Client_Name','Property','Operator','Moisture_Condition',
-    'Tip_Test_Small_PSI','Tip_Test_Large_PSI','Tip_Selected','Tip_Selection_Note',
-    'Point_ID','Latitude','Longitude','Tip_Used',
-    'PSI_3in','PSI_6in','PSI_9in','PSI_12in','PSI_15in','PSI_18in',
-    'Soil_Horizon','Location_Description','Notes'
+    'Tip_Test_Small_Zone','Tip_Test_Large_Zone','Tip_Selected','Tip_Selection_Note',
+    'QC_Rate_Pct','QC_Cell_Count','QC_Cells',
+    'Point_ID','Grid_ID','KML_Label','Latitude','Longitude','Status','Tip_Used',
+    'Zone_3in','PSI_3in','Zone_6in','PSI_6in','Zone_9in','PSI_9in',
+    'Zone_12in','PSI_12in','Zone_15in','PSI_15in','Zone_18in','PSI_18in',
+    'QC_Validation','QC_Split_Sample','QC_Veg_Photo','QC_Core_Photo',
+    'Notes','Skip_Reason','Skip_Note','Timestamp'
   ];
-  const rows = [cols.join(',')];
-  points.forEach(pt=>{
-    rows.push([
+  const rows=[cols.join(',')];
+  surveyPoints.forEach(pt=>{
+    const tip=pt.tip||h.tipSelected;
+    const qc=qcCellChecks[pt.gridId]||{};
+    const row=[
       q(h.surveyId),q(h.date),q(h.clientName),q(h.property),q(h.operator),q(h.moisture),
-      h.tipTestSmall,h.tipTestLarge,q(h.tipSelected),q(h.tipNote),
-      q(pt.pointId),pt.lat,pt.lon,q(pt.tip),
-      pt.psi3,pt.psi6,pt.psi9,pt.psi12,pt.psi15,pt.psi18,
-      q(pt.horizon),q(pt.locDesc),q(pt.notes)
-    ].join(','));
+      q(h.tipTestSmall),q(h.tipTestLarge),q(h.tipSelected),q(h.tipNote),
+      h.qcRate,h.qcCellCount,q(h.qcCells),
+      q(pt.pointId),q(pt.gridId),q(pt.kmlLabel),pt.lat,pt.lon,q(pt.status),q(tip)
+    ];
+    DEPTHS.forEach(d=>{
+      const z=pt.zones&&pt.zones[d]?pt.zones[d]:'';
+      row.push(q(z));row.push(getAssignedPSI(z,tip));
+    });
+    row.push(
+      pt.qcValidation?'TRUE':'FALSE',
+      pt.qcValidation?(qc.split?'TRUE':'FALSE'):'',
+      pt.qcValidation?(qc.veg?'TRUE':'FALSE'):'',
+      pt.qcValidation?(qc.core?'TRUE':'FALSE'):'',
+      q(pt.notes),q(pt.skipReason),q(pt.skipNote),q(pt.timestamp)
+    );
+    rows.push(row.join(','));
   });
   return rows.join('\n');
 }
 
 function csvFilename(){
-  const h = getSurveyHeader();
-  const client = (h.clientName||'Survey').replace(/[^a-z0-9]/gi,'_');
-  return (h.surveyId||'ATX_Compaction')+'_'+client+'.csv';
+  const h=getSurveyHeader();
+  const client=(h.clientName||'Survey').replace(/[^a-z0-9]/gi,'_');
+  return(h.surveyId||'ATX_Compaction')+'_'+client+'.csv';
 }
 
 function q(v){
-  if(v===undefined||v===null) return '';
+  if(v===undefined||v===null)return'';
   v=String(v);
-  if(v.includes(',')||v.includes('"')||v.includes('\n')) return '"'+v.replace(/"/g,'""')+'"';
+  if(v.includes(',')||v.includes('"')||v.includes('\n'))return'"'+v.replace(/"/g,'""')+'"';
   return v;
 }
 
 // ── EXPORT: LOCAL ─────────────────────────────────────────────────────────────
 function exportLocal(){
-  if(!points.length){ alert('No points logged yet.'); return; }
-  const blob = new Blob([buildCSV()],{type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download=csvFilename(); a.click();
-  URL.revokeObjectURL(url);
+  if(!surveyPoints.length){alert('No points loaded.');return;}
+  const blob=new Blob([buildCSV()],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=csvFilename();a.click();URL.revokeObjectURL(url);
 }
 
 // ── EXPORT: GOOGLE DRIVE ──────────────────────────────────────────────────────
 async function exportToDrive(){
-  if(!points.length){ alert('No points logged yet.'); return; }
-  if(!accessToken){ showDriveStatus('Connect to Google Drive first using the button in the header','info'); return; }
+  if(!surveyPoints.length){alert('No points loaded.');return;}
+  if(!accessToken){showDriveStatus('Connect to Google Drive first','info');return;}
   showDriveStatus('Locating Drive folder...','info');
   try{
-    const folderId = await getOrCreateFolderPath(DRIVE_FOLDER_PATH);
+    const folderId=await getOrCreateFolderPath(DRIVE_FOLDER_PATH);
     showDriveStatus('Uploading CSV...','info');
     await uploadCSVtoDrive(folderId);
-    showDriveStatus('CSV saved to Field Data / ATX Field Compaction Surveys in Google Drive','success');
-    setTimeout(()=>hideDriveStatus(),5000);
-  }catch(e){
-    showDriveStatus('Export failed: '+e.message,'error');
-  }
+    showDriveStatus('CSV saved to Field Data / ATX Field Compaction Surveys','success');
+    setTimeout(hideDriveStatus,5000);
+  }catch(e){showDriveStatus('Export failed: '+e.message,'error');}
 }
-
-async function getOrCreateFolderPath(pathParts){
-  let parentId = 'root';
-  for(const name of pathParts){
-    parentId = await getOrCreateFolder(name, parentId);
-  }
-  return parentId;
+async function getOrCreateFolderPath(parts){let p='root';for(const n of parts)p=await getOrCreateFolder(n,p);return p;}
+async function getOrCreateFolder(name,parentId){
+  const q=`name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`;
+  const res=await gdriveRequest('GET',`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
+  if(res.files&&res.files.length>0)return res.files[0].id;
+  return(await gdriveRequest('POST','https://www.googleapis.com/drive/v3/files',{name,mimeType:'application/vnd.google-apps.folder',parents:[parentId]})).id;
 }
-
-async function getOrCreateFolder(name, parentId){
-  const q = `name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`;
-  const res = await gdriveRequest('GET', `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
-  if(res.files && res.files.length > 0) return res.files[0].id;
-  const created = await gdriveRequest('POST','https://www.googleapis.com/drive/v3/files',{
-    name, mimeType:'application/vnd.google-apps.folder',
-    parents:[parentId]
-  });
-  return created.id;
-}
-
 async function uploadCSVtoDrive(folderId){
-  const csv = buildCSV();
-  const filename = csvFilename();
-  const meta = JSON.stringify({name:filename, parents:[folderId], mimeType:'text/csv'});
-  const body = new Blob([
-    '--boundary\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n',
-    meta,
-    '\r\n--boundary\r\nContent-Type: text/csv\r\n\r\n',
-    csv,
-    '\r\n--boundary--'
-  ],{type:'multipart/related; boundary=boundary'});
-  const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{
-    method:'POST',
-    headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'multipart/related; boundary=boundary'},
-    body
-  });
-  if(!res.ok) throw new Error('Drive upload failed: '+res.status);
-  return res.json();
+  const csv=buildCSV(),filename=csvFilename();
+  const meta=JSON.stringify({name:filename,parents:[folderId],mimeType:'text/csv'});
+  const body=new Blob(['--boundary\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n',meta,'\r\n--boundary\r\nContent-Type: text/csv\r\n\r\n',csv,'\r\n--boundary--'],{type:'multipart/related; boundary=boundary'});
+  const res=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'multipart/related; boundary=boundary'},body});
+  if(!res.ok)throw new Error('Drive upload: '+res.status);return res.json();
 }
-
-async function gdriveRequest(method, url, body){
-  const opts = {
-    method,
-    headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'}
-  };
-  if(body) opts.body = JSON.stringify(body);
-  const res = await fetch(url, opts);
-  if(!res.ok){
-    const err = await res.json().catch(()=>({}));
-    throw new Error((err.error&&err.error.message)||res.status);
-  }
+async function gdriveRequest(method,url,body){
+  const opts={method,headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'}};
+  if(body)opts.body=JSON.stringify(body);
+  const res=await fetch(url,opts);
+  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error((err.error&&err.error.message)||res.status);}
   return res.json();
 }
 
 // ── SESSION PERSISTENCE ───────────────────────────────────────────────────────
 function saveSession(){
   try{
-    localStorage.setItem('atx_compaction_v2', JSON.stringify({
-      survey: getSurveyHeader(), points
+    localStorage.setItem('atx_compaction_v3',JSON.stringify({
+      survey:getSurveyHeader(),points:surveyPoints,
+      importFile:document.getElementById('importLabel').textContent,
+      qcGridIds,qcConfirmed,qcCellChecks
     }));
   }catch(e){}
 }
 
 function loadSession(){
   try{
-    const raw = localStorage.getItem('atx_compaction_v2');
-    if(!raw) return;
-    const data = JSON.parse(raw);
-    if(data.points && data.points.length > 0){
-      if(confirm('Resume previous session? ('+data.points.length+' point(s) found)')){
-        points = data.points;
-        const s = data.survey||{};
-        ['clientName','property','operator','moisture','tipNote'].forEach(id=>{
-          if(s[id]) document.getElementById(id).value=s[id];
-        });
-        if(s.tipTestSmall) document.getElementById('tipSmall').value=s.tipTestSmall;
-        if(s.tipTestLarge) document.getElementById('tipLarge').value=s.tipTestLarge;
-        if(s.tipSelected)  document.getElementById('tipSelected').value=s.tipSelected;
-        if(s.moisture)     document.getElementById('moisture').value=s.moisture;
-        renderPoints();
-        updatePtId();
+    const raw=localStorage.getItem('atx_compaction_v3');
+    if(!raw)return;
+    const data=JSON.parse(raw);
+    if(data.points&&data.points.length>0){
+      const complete=data.points.filter(p=>p.status==='complete').length;
+      const skipped=data.points.filter(p=>p.status==='skipped').length;
+      if(confirm(`Resume previous session?\n${data.points.length} points | ${complete} complete | ${skipped} skipped`)){
+        surveyPoints=data.points;
+        const s=data.survey||{};
+        ['clientName','property','operator','moisture','tipNote'].forEach(id=>{if(s[id])document.getElementById(id).value=s[id];});
+        if(s.tipTestSmall)document.getElementById('tipSmall').value=s.tipTestSmall;
+        if(s.tipTestLarge)document.getElementById('tipLarge').value=s.tipTestLarge;
+        if(s.tipSelected)document.getElementById('tipSelected').value=s.tipSelected;
+        if(s.moisture)document.getElementById('moisture').value=s.moisture;
+        if(data.importFile){
+          document.getElementById('importLabel').textContent=data.importFile;
+          document.getElementById('importCount').textContent=surveyPoints.length+' points loaded';
+          document.getElementById('importZone').classList.add('loaded');
+        }
+        qcGridIds=data.qcGridIds||[];
+        qcConfirmed=data.qcConfirmed||false;
+        qcCellChecks=data.qcCellChecks||{};
+        renderPointList();
+        updateStatusCounts();
         onSurveyTipChange();
       }
     }
@@ -565,40 +1100,29 @@ function loadSession(){
 }
 
 function exportBackup(){
-  const data = {survey:getSurveyHeader(), points, exported:new Date().toISOString()};
-  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download=(document.getElementById('surveyId').value||'ATX_Session')+'_backup.json';
-  a.click();
-  URL.revokeObjectURL(url);
+  const data={survey:getSurveyHeader(),points:surveyPoints,qcGridIds,qcCellChecks,exported:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=(document.getElementById('surveyId').value||'ATX_Session')+'_backup.json';
+  a.click();URL.revokeObjectURL(url);
 }
 
 function clearAll(){
-  if(!confirm('Clear all points and survey data? This cannot be undone.')) return;
-  points=[];
-  localStorage.removeItem('atx_compaction_v2');
-  renderPoints();
-  updatePtId();
-  flashSaved();
+  if(!confirm('Clear all points and survey data? This cannot be undone.'))return;
+  surveyPoints=[];activePointIndex=-1;qcGridIds=[];qcConfirmed=false;qcCellChecks={};
+  localStorage.removeItem('atx_compaction_v3');
+  document.getElementById('importZone').classList.remove('loaded');
+  document.getElementById('importLabel').textContent='Tap to load QGIS subgrid CSV';
+  document.getElementById('importCount').textContent='';
+  document.getElementById('activePointSection').style.display='none';
+  renderPointList();updateStatusCounts();flashSaved();
 }
 
 // ── UI HELPERS ────────────────────────────────────────────────────────────────
-function flashSaved(){
-  const el = document.getElementById('saveIndicator');
-  el.classList.add('visible');
-  setTimeout(()=>el.classList.remove('visible'),2000);
-}
-
-function showDriveStatus(msg, type){
-  const el = document.getElementById('driveStatus');
-  el.textContent = msg;
-  el.className = 'drive-status '+type;
-}
-
-function hideDriveStatus(){
-  document.getElementById('driveStatus').className='drive-status';
-}
+function flashSaved(){const el=document.getElementById('saveIndicator');el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),2000);}
+function showDriveStatus(msg,type){const el=document.getElementById('driveStatus');el.textContent=msg;el.className='drive-status '+type;}
+function hideDriveStatus(){document.getElementById('driveStatus').className='drive-status';}
 
 init();
 </script>
